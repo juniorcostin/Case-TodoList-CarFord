@@ -63,16 +63,19 @@ def carros_criar(body, current_user):
         # Criação de variáveis para a validação se o usuário cupre os requisitos
         login_admin = current_user.admin
         body_id_proprietario = body["id_proprietario"]
+        quantidade_carros = Carros.query.filter_by(id_proprietario=body_id_proprietario).count()
 
         # IF para validar se o proprietário informado está cadatrado no banco de dados
         if not Proprietarios.query.filter_by(id=body_id_proprietario).first():
             return gera_response(400, "Carros", {}, f"Erro ao cadastrar carro! Mensagem: O proprietário informado não existe")
 
         # IF para validar a quantidade de carros pertencentes ao proprietáio
-        if Carros.query.filter_by(id_proprietario=body_id_proprietario).count() >= 3:
+        if quantidade_carros >= 3:
             return gera_response(400, "Carros", {}, f"Erro ao cadastrar carro! Mensagem: O proprietário informado atingiu o limite de carros")
+
         # IF que valida se o usuário tem as permissões necessárias para realizar a criação
         if login_admin == True:
+            # Campo que realiza o commit dentro da tabela de carros
             carro = Carros(
                 modelo=body["modelo"],
                 cor=body["cor"],
@@ -80,6 +83,26 @@ def carros_criar(body, current_user):
             )
             db.session.add(carro)
             db.session.commit()
+            quantidade_carros = Carros.query.filter_by(id_proprietario=body_id_proprietario).count()
+
+            # Campo para atualizar a quantidade de carros pertencentes ao proprietário
+            proprietarios = Proprietarios.query.filter_by(id=body_id_proprietario).first()
+            proprietarios.quantidade_carros = quantidade_carros
+            db.session.add(proprietarios)
+            db.session.commit()
+
+            # IF Else para atualizar o campo de oportunidade venda caso o proprietário tenha 3 carros
+            if quantidade_carros >= 3:
+                proprietario = Proprietarios.query.filter_by(id=body_id_proprietario).first()
+                proprietario.oportunidade_venda = False
+                db.session.add(proprietario)
+                db.session.commit()
+            else:
+                proprietario = Proprietarios.query.filter_by(id=body_id_proprietario).first()
+                proprietario.oportunidade_venda = True
+                db.session.add(proprietario)
+                db.session.commit()
+
             return gera_response(201, "Carros", carro.to_json(), "carro cadastrado com sucesso!")
         else:
             return gera_response(403, "Carros", {}, "Você não tem permissão para cadastrar o carro!")
@@ -132,11 +155,32 @@ def carros_deleta(id, current_user):
             return gera_response(400, "Carros", {}, f"Falha ao deletar roprietario! Mensagem: O carro ID:{id} não existe!")
 
         carros = Carros.query.filter_by(id=id).first()
+        carros_json = carros.to_json()
 
         # IF para validar se o usuário tem a permissão necessária para deletar
         if login_admin == True:
             db.session.delete(carros)
             db.session.commit()
+
+            quantidade_carros = Carros.query.filter_by(id_proprietario=carros_json["id_proprietario"]).count()
+            # Campo para atualizar a quantidade de carros pertencentes ao proprietário
+            proprietarios = Proprietarios.query.filter_by(id=carros_json["id_proprietario"]).first()
+            proprietarios.quantidade_carros = quantidade_carros
+            db.session.add(proprietarios)
+            db.session.commit()
+
+            # IF Else para atualizar o campo de oportunidade venda caso o proprietário tenha 3 carros
+            if quantidade_carros >= 3:
+                proprietario = Proprietarios.query.filter_by(id=carros_json["id_proprietario"]).first()
+                proprietario.oportunidade_venda = False
+                db.session.add(proprietario)
+                db.session.commit()
+            else:
+                proprietario = Proprietarios.query.filter_by(id=carros_json["id_proprietario"]).first()
+                proprietario.oportunidade_venda = True
+                db.session.add(proprietario)
+                db.session.commit()
+                
             return gera_response(200, "Carros", carros.to_json(), "Carros deletado com sucesso!")
     except Exception as e:
         return gera_response(400, "Carros", {}, f"Erro ao deletar carro! Mensagem:{e}")

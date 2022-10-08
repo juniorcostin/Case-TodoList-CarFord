@@ -123,6 +123,8 @@ def usuarios_atualiza(id, body, current_user):
         if login_admin == True:
 
             # IF para iniciar as validações dos campos informados no body
+            if "nome" in body:
+                usuarios.nome = body["nome"]
             if "email" in body:
                 email = body["email"]
                 # IF para validar se o e-mail já existe no banco de dados

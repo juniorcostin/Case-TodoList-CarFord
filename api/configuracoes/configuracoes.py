@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 random_str = string.ascii_letters + string.digits + string.ascii_uppercase
 key = ''.join(random.choice(random_str) for i in range(2))
 
-db_uri = ''
+db_uri = 'postgresql://darkroom9282:v2mzt67cZYDdAq@168.138.150.79:49154/todolist'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True

@@ -1,6 +1,5 @@
 # Imports nencessários para que os Endpoints funcionem corretamente
 import json
-
 from api.configuracoes.configuracoes import db
 from flask import Response
 
@@ -12,19 +11,27 @@ from flask import Response
 class Proprietarios(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
     oportunidade_venda = db.Column(db.Boolean, nullable=False)
+    quantidade_carros = db.Column(db.Integer, nullable=False)
 
     def __init__(self,
                  nome,
+                 email,
                  oportunidade_venda,
+                 quantidade_carros
                  ):
         self.nome = nome
+        self.email = email
         self.oportunidade_venda = oportunidade_venda
+        self.quantidade_carros = quantidade_carros
 
     def to_json(self):
         return {"id": self.id,
                 "nome": self.nome,
-                "oportunidade_venda": self.oportunidade_venda
+                "email": self.email,
+                "oportunidade_venda": self.oportunidade_venda,
+                "quantidade_carros": self.quantidade_carros
                 }
 
 # Endpoint GET que lista todos os proprietarios cadastrados dentro do banco de dados
@@ -39,7 +46,7 @@ def proprietarios_seleciona_todos():
 
 # Endpoint GET que lista apenas um proprietário, sendo filtrado pelo ID
 # O ID deve ser informado na URL e também deve estar cadastrado no banco de dados
-def proprietarios_seleciona_um(id, ):
+def proprietarios_seleciona_um(id):
     try:
         # IF para validar se o ID informado está cadastrado no banco de dados
         if not Proprietarios.query.filter_by(id=id).first():
@@ -59,11 +66,17 @@ def proprietarios_criar(body, current_user):
         # Criação de variáveis para a validação se o usuário cupre os requisitos
         login_admin = current_user.admin
 
+        # IF para validar se o email informado já está cadastrado no sistema
+        if Proprietarios.query.filter_by(email=body["email"]).first():
+            return gera_response(400, "Proprietarios", {}, f"Falha ao cadastrar proprietario! Mensagem: O email informado já existe!")
+
         # IF que valida se o usuário tem as permissões necessárias para realizar a criação
         if login_admin == True:
             proprietario = Proprietarios(
                 nome=body["nome"],
-                oportunidade_venda=body["oportunidade_venda"]
+                email=body["email"],
+                oportunidade_venda=True,
+                quantidade_carros=0
             )
             db.session.add(proprietario)
             db.session.commit()
@@ -86,16 +99,19 @@ def proprietarios_atualiza(id, body, current_user):
         if not Proprietarios.query.filter_by(id=id).first():
             return gera_response(400, "Proprietarios", {}, f"Falha ao atualizar proprietario! Mensagem: O proprietário ID:{id} não existe!") 
 
+        # IF para validar se o email informado já existe no banco
+        if Proprietarios.query.filter_by(email=body["email"]).first():
+            return gera_response(400, "Proprietarios", {}, f"Falha ao atualizar proprietario! Mensagem: O email informado já existe!")
+
         proprietarios = Proprietarios.query.filter_by(id=id).first()
-        
         # IF para validar se o usuário tem as permissões nencessárias para editar
         if login_admin == True:
 
             # IF para iniciar as validações dos campos informados no body
             if "nome" in body:
                 proprietarios.nome = body["nome"]
-            if "oportunidade_venda" in body:
-                proprietarios.oportunidade_venda = body["oportunidade_venda"]
+            if "email" in body:
+                proprietarios.email = body["email"]
         
             db.session.add(proprietarios)
             db.session.commit()
