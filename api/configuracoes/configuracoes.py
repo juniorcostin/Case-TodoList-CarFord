@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 random_str = string.ascii_letters + string.digits + string.ascii_uppercase
 key = ''.join(random.choice(random_str) for i in range(2))
 
-db_uri = 'postgresql://darkroom9282:v2mzt67cZYDdAq@168.138.150.79:49154/todolist'
+db_uri = 'postgresql://carford:carford@db:5432/carford'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -21,4 +21,6 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=2)
 
 
 db = SQLAlchemy(app)
+
+
 

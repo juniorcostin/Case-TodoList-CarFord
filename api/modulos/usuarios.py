@@ -1,7 +1,7 @@
 # Imports nencessários para que os Endpoints funcionem corretamente
 import json
 
-from api.configuracoes.configuracoes import db
+from configuracoes.configuracoes import db
 from flask import Response
 from werkzeug.security import check_password_hash, generate_password_hash
 

@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 # Variável para o armazenamento da URL da API
-url = "http://localhost:5000/api/"
+url = "http://api:5000/api/"
 
 # Função para exibição dos dados em tela
 def usuarios():
@@ -20,11 +20,11 @@ def usuarios():
         }
 
     # IF para validar se o botão de entrar foi precionado
-    with st.expander("Visualizar"):
+    with st.expander("Visualizar", expanded=True):
 
         # IF para validar se os campos foram preenchidos corretamente
         if email == "" or senha == "":
-            return st.error("Usuário ou senha incorretos")
+            return st.info("Realize o login para visualizar!")
         
         login = requests.post(url+"login", json=body)
         token = login.json()["token"]
@@ -110,58 +110,61 @@ def usuarios():
 
         # IF para iniciar a edição
         if editar:            
-            # IF para atualizar caso o nome seja preenchido
-            if nome != "":
-                body = {
-                    "nome": nome,
-                }
-                put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
-                st.success("usuario editado com sucesso!")
-
-            # ELIF para atualizar caso o e-mail seja preenchido
-            elif email != "":
-                body = {
-                    "email": email,
-                }
-                put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
-                
-                # IF para validar se o e-mail já existe no banco de dados
-                if put.json()["mensagem"] == "Falha ao atualizar usuario! Mensagem: O email informado já existe!":
-                    st.error("O email informado já existe!")
-                else:
+            if id == 1 or id == 2:
+                return st.error("Não é possivel editar esse usuário!")
+            else:
+                # IF para atualizar caso o nome seja preenchido
+                if nome != "":
+                    body = {
+                        "nome": nome,
+                    }
+                    put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
                     st.success("usuario editado com sucesso!")
 
-            # ELIF para atualizar caso a senha seja preenchido
-            elif senha != "":
-                body = {
-                    "senha": senha,
-                }
-                put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
-                st.success("usuario editado com sucesso!")
-
-            # ELIF para atualizar caso o admin seja preenchido
-            elif admin == True or admin == False:
-                body = {
-                    "admin": admin
-                }
-                put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
-                st.success("usuario editado com sucesso!")
-
-            # Else para caso todos os campos sejam preenchidos
-            else:  
-                body = {
-                        "nome": nome,
+                # ELIF para atualizar caso o e-mail seja preenchido
+                elif email != "":
+                    body = {
                         "email": email,
+                    }
+                    put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
+                    
+                    # IF para validar se o e-mail já existe no banco de dados
+                    if put.json()["mensagem"] == "Falha ao atualizar usuario! Mensagem: O email informado já existe!":
+                        st.error("O email informado já existe!")
+                    else:
+                        st.success("usuario editado com sucesso!")
+
+                # ELIF para atualizar caso a senha seja preenchido
+                elif senha != "":
+                    body = {
                         "senha": senha,
+                    }
+                    put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
+                    st.success("usuario editado com sucesso!")
+
+                # ELIF para atualizar caso o admin seja preenchido
+                elif admin == True or admin == False:
+                    body = {
                         "admin": admin
                     }
-                put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
-
-                # IF para validar se o e-mail já existe no banco de dados
-                if put.json()["mensagem"] == "Falha ao atualizar usuario! Mensagem: O email informado já existe!":
-                    st.error("O email informado já existe!")
-                else:
+                    put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
                     st.success("usuario editado com sucesso!")
+
+                # Else para caso todos os campos sejam preenchidos
+                else:  
+                    body = {
+                            "nome": nome,
+                            "email": email,
+                            "senha": senha,
+                            "admin": admin
+                        }
+                    put = requests.put(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
+
+                    # IF para validar se o e-mail já existe no banco de dados
+                    if put.json()["mensagem"] == "Falha ao atualizar usuario! Mensagem: O email informado já existe!":
+                        st.error("O email informado já existe!")
+                    else:
+                        st.success("usuario editado com sucesso!")
 
     # Expander para criar na interface web o componente de Remoção
     with st.expander("Remover"):
@@ -179,5 +182,8 @@ def usuarios():
         deletar = st.button("Deletar")
 
         if deletar:
-            delete = requests.delete(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
-            st.success("usuario deletado com sucesso!")
+            if id == 1 or id == 2:
+                return st.error("Não é possivel editar esse usuário!")
+            else:
+                delete = requests.delete(url+f"usuarios/{id}", headers={'Authorization': token}, json=body)
+                st.success("usuario deletado com sucesso!")

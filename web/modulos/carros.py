@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 # Variável para o armazenamento da URL da API
-url = "http://localhost:5000/api/"
+url = "http://api:5000/api/"
 
 # Função para exibição dos dados em tela
 def carros():
@@ -20,11 +20,11 @@ def carros():
         }
 
     # IF para validar se o botão de entrar foi precionado
-    with st.expander("Visualizar"):
+    with st.expander("Visualizar", expanded=True):
 
         # IF para validar se os campos foram preenchidos corretamente
         if email == "" or senha == "":
-            return st.error("Usuário ou senha incorretos")
+            return st.info("Realize o login para visualizar!")
         
         login = requests.post(url+"login", json=body)
         token = login.json()["token"]
@@ -45,7 +45,6 @@ def carros():
         carros_modelos = []
         carros_cores = []
         proprietarios = []
-        proprietarios_nomes= []
 
         # Loop para retorar cada linha
         for carro in carros:
@@ -53,13 +52,9 @@ def carros():
             carros_modelos.append(carro["modelo"])
             carros_cores.append(carro["cor"])
             proprietarios.append(carro["id_proprietario"])
-            id_proprietario = carro["id_proprietario"]
-            prop_nomes = requests.get(url+f"proprietarios/{id_proprietario}", headers={'Authorization': token})
-            prop_nomes = prop_nomes.json()["Proprietarios"]
-            proprietarios_nomes.append(prop_nomes["nome"])
 
         # Criação do dataframe responsável por exibir os dados
-        dataframe = {"ID": carros_ids, "Modelo": carros_modelos, "Cor": carros_cores, "Proprietario": proprietarios_nomes, "Proprietario ID": proprietarios}
+        dataframe = {"ID": carros_ids, "Modelo": carros_modelos, "Cor": carros_cores, "Proprietario ID": proprietarios}
         df = pd.DataFrame(data=dataframe)
         df.set_index("ID", inplace=True)
         st.table(df)
@@ -85,15 +80,18 @@ def carros():
 
         # IF para cadastrar caso o botão seja precionado
         if cadastrar:
-            body = {
-                "modelo": modelo,
-                "cor": cor,
-                "id_proprietario": id
-            }
-            post = requests.post(url+"carros", headers={'Authorization': token}, json=body)
-            post = post.json()
-            st.success("Sucesso ao cadastrar Carro!")
-                
+            if id == "" or id == None or id == False:
+                st.error("Não existem proprietários criados!")
+            else:
+                body = {
+                    "modelo": modelo,
+                    "cor": cor,
+                    "id_proprietario": id
+                }
+                post = requests.post(url+"carros", headers={'Authorization': token}, json=body)
+                post = post.json()
+                st.success("Sucesso ao cadastrar Carro!")
+                    
     # Expander para criar na interface web o componente de Edição
     with st.expander("Editar"):
         # Variáveis responsáveis por realizar a criação do campo que trás os IDs já cadastrados
@@ -107,37 +105,41 @@ def carros():
         
         # Variáveis responsáveis pela criação dos elementos no front
         id = st.selectbox("Informe o número do Carro: ", (id_carro), key="id_editar")
-        modelo = st.selectbox("Modelo do carro: ", ("","Hatch", "Sedan", "Convertible"), key=("modelo_editar"))
-        cor = st.selectbox("Cor do carro: ", ("","Yellow", "Blue", "Gray"), key="cor_editar")
+        modelo = st.selectbox("Modelo do carro: ", (" ","Hatch", "Sedan", "Convertible"), key=("modelo_editar"), index=0)
+        cor = st.selectbox("Cor do carro: ", (" ","Yellow", "Blue", "Gray"), key="cor_editar", index=0)
         editar = st.button("Editar")
 
         # IF para iniciar a edição
         if editar:
-            
-            # IF para atualizar caso o modelo seja preenchido
-            if modelo != "":
-                body = {
-                    "modelo": modelo,
-                }
-                put = requests.put(url+f"carros/{id}", headers={'Authorization': token}, json=body)
-                st.success("Carro editado com sucesso!")
 
-            # ELIF para atualizar caso a cor seja preenchido
-            elif cor != "":
-                body = {
-                    "cor": cor,
-                }
-                put = requests.put(url+f"carros/{id}", headers={'Authorization': token}, json=body)    
-                st.success("Carro editado com sucesso!")
+            if id == "" or id == None or id == False:
+                st.error("Não existem carros criados!")
+            else:
+                # Else para caso os dois campos sejam preenchidos
+                if modelo != " " and cor != " ":  
+                    body = {
+                            "modelo": modelo,
+                            "cor": cor
+                        }
+                    put = requests.put(url+f"carros/{id}", headers={'Authorization': token}, json=body)
+                    st.write(put.json())
+                    st.success("Carro editado com sucesso!")
 
-            # Else para caso os dois campos sejam preenchidos
-            else:  
-                body = {
+                # IF para atualizar caso o modelo seja preenchido
+                elif modelo != "" and cor == " ":
+                    body = {
                         "modelo": modelo,
-                        "cor": cor
                     }
-                put = requests.put(url+f"carros/{id}", headers={'Authorization': token}, json=body)
-                st.success("Carro editado com sucesso!")
+                    put = requests.put(url+f"carros/{id}", headers={'Authorization': token}, json=body)
+                    st.success("Carro editado com sucesso!")
+
+                # ELIF para atualizar caso a cor seja preenchido
+                elif cor != "" and modelo == " ":
+                    body = {
+                        "cor": cor,
+                    }
+                    put = requests.put(url+f"carros/{id}", headers={'Authorization': token}, json=body)    
+                    st.success("Carro editado com sucesso!")
 
     # Expander para criar na interface web o componente de Remoção
     with st.expander("Remover"):

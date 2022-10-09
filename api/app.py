@@ -3,19 +3,20 @@ import json
 
 from flask import Response, request
 
-from api.autenticacao.autenticacao import jwt_required
-from api.configuracoes.configuracoes import app
-from api.modulos.carros import (carros_atualiza, carros_criar, carros_deleta,
+from autenticacao.autenticacao import jwt_required
+from configuracoes.configuracoes import app
+from modulos.carros import (carros_atualiza, carros_criar, carros_deleta,
                                 carros_seleciona_todos, carros_seleciona_um)
-from api.modulos.login import login_usuario
-from api.modulos.proprietarios import (proprietarios_atualiza,
+from modulos.login import login_usuario
+from modulos.proprietarios import (proprietarios_atualiza,
                                        proprietarios_criar,
                                        proprietarios_deleta,
                                        proprietarios_seleciona_todos,
                                        proprietarios_seleciona_um)
-from api.modulos.usuarios import (usuarios_atualiza, usuarios_criar,
+from modulos.usuarios import (usuarios_atualiza, usuarios_criar,
                                   usuarios_deleta, usuarios_seleciona_todos,
                                   usuarios_seleciona_um)
+
 
 
 ####################### LOGIN #######################
@@ -155,5 +156,7 @@ def gera_response(status, nome_conteudo, conteudo, mensagem = False):
     return Response(json.dumps(body, default=str), status= status, mimetype="application/json")
 
 #Inicializador Flask
-app.run(host="localhost",port=10000, debug=True ,threaded=True)
+#app.run(host="localhost",port=8000, debug=True ,threaded=True)
 
+if __name__ == "__main__":
+    app.run()

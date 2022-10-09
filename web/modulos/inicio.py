@@ -4,7 +4,7 @@ import pandas as pd
 
 def inicio():
     # Variável para o armazenamento da URL da API
-    url = "http://localhost:5000/api/"
+    url = "http://api:5000/api/"
 
     body = {
         "email": "viewer@viewer.com",
@@ -17,6 +17,7 @@ def inicio():
 
     col1, col2 = st.columns(2)
     with col1:
+        st.subheader("Lista de Proprietários")
         # Requisição para o endpoint de listar
         proprietarios = requests.get(url+"proprietarios", headers={'Authorization': token})
         proprietarios = proprietarios.json()["Proprietarios"]
@@ -49,6 +50,7 @@ def inicio():
         st.table(df)
 
         with col2:
+            st.subheader("Lista de Carros")
             # Requisição para o endpoint de listar
             carros = requests.get(url+"carros", headers={'Authorization': token})
             carros = carros.json()["Carros"]
@@ -58,7 +60,6 @@ def inicio():
             carros_modelos = []
             carros_cores = []
             proprietarios = []
-            proprietarios_nomes= []
 
             # Loop para retorar cada linha
             for carro in carros:
@@ -66,13 +67,9 @@ def inicio():
                 carros_modelos.append(carro["modelo"])
                 carros_cores.append(carro["cor"])
                 proprietarios.append(carro["id_proprietario"])
-                id_proprietario = carro["id_proprietario"]
-                prop_nomes = requests.get(url+f"proprietarios/{id_proprietario}", headers={'Authorization': token})
-                prop_nomes = prop_nomes.json()["Proprietarios"]
-                proprietarios_nomes.append(prop_nomes["nome"])
 
             # Criação do dataframe responsável por exibir os dados
-            dataframe = {"ID": carros_ids, "Modelo": carros_modelos, "Cor": carros_cores, "Proprietario": proprietarios_nomes, "Proprietario ID": proprietarios}
+            dataframe = {"ID": carros_ids, "Modelo": carros_modelos, "Cor": carros_cores, "Proprietario ID": proprietarios}
             df = pd.DataFrame(data=dataframe)
             df.set_index("ID", inplace=True)
             st.table(df)

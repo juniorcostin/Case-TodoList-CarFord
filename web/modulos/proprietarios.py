@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 # Variável para o armazenamento da URL da API
-url = "http://localhost:5000/api/"
+url = "http://api:5000/api/"
 
 # Função para exibição dos dados em tela
 def proprietarios():
@@ -20,11 +20,11 @@ def proprietarios():
         }
 
     # IF para validar se o botão de entrar foi precionado
-    with st.expander("Visualizar"):
+    with st.expander("Visualizar", expanded=True):
 
         # IF para validar se os campos foram preenchidos corretamente
         if email == "" or senha == "":
-            return st.error("Usuário ou senha incorretos")
+            return st.info("Realize o login para visualizar!")
         
         login = requests.post(url+"login", json=body)
         token = login.json()["token"]
@@ -76,6 +76,8 @@ def proprietarios():
 
         # IF para cadastrar caso o botão seja precionado
         if cadastrar:
+            if email == "" or nome == "":
+                return st.error("Nome e email são obrigatórios!")
             body = {
                 "nome": nome,
                 "email": email
@@ -112,27 +114,33 @@ def proprietarios():
             
             # IF para atualizar caso o email seja preenchido
             if nome != "":
-                body = {
-                    "nome": nome,
-                }
-                put = requests.put(url+f"proprietarios/{id}", headers={'Authorization': token}, json=body)
-                st.success("Proprietário editado com sucesso!")
+                try:
+                    body = {
+                        "nome": nome,
+                    }
+                    put = requests.put(url+f"proprietarios/{id}", headers={'Authorization': token}, json=body)
+                    st.success("Proprietário editado com sucesso!")
+                except:
+                    st.error("Falha ao atualizar o proprietário! Contate a administração do sistema")
 
             # ELIF para atualizar caso o e-mail seja preenchido
             elif email != "":
-                body = {
-                    "email": email,
-                }
-                put = requests.put(url+f"proprietarios/{id}", headers={'Authorization': token}, json=body)
+                try:
+                    body = {
+                        "email": email,
+                    }
+                    put = requests.put(url+f"proprietarios/{id}", headers={'Authorization': token}, json=body)
                 
-                # IF para validar se o e-mail já existe no banco de dados
-                if put.json()["mensagem"] == "Falha ao atualizar proprietario! Mensagem: O email informado já existe!":
-                    st.error("O email informado já existe!")
-                else:
-                    st.success("Proprietário editado com sucesso!")
+                    # IF para validar se o e-mail já existe no banco de dados
+                    if put.json()["mensagem"] == "Falha ao atualizar proprietario! Mensagem: O email informado já existe!":
+                        st.error("O email informado já existe!")
+                    else:
+                        st.success("Proprietário editado com sucesso!")
+                except:
+                    st.error("Falha ao atualizar o proprietário! Contate a administração do sistema")
 
             # Else para caso os dois campos sejam preenchidos
-            else:  
+            elif email != "" and nome !="":  
                 body = {
                         "nome": nome,
                         "email": email

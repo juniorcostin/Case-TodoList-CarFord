@@ -1,8 +1,8 @@
 # Imports nencessários para que os Endpoints funcionem corretamente
 import json
 
-from api.configuracoes.configuracoes import db
-from api.modulos.proprietarios import Proprietarios
+from configuracoes.configuracoes import db
+from modulos.proprietarios import Proprietarios
 from flask import Response
 
 ####################### DATABASE #######################

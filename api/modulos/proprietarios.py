@@ -1,6 +1,6 @@
 # Imports nencessários para que os Endpoints funcionem corretamente
 import json
-from api.configuracoes.configuracoes import db
+from configuracoes.configuracoes import db
 from flask import Response
 
 ####################### DATABASE #######################
@@ -99,9 +99,6 @@ def proprietarios_atualiza(id, body, current_user):
         if not Proprietarios.query.filter_by(id=id).first():
             return gera_response(400, "Proprietarios", {}, f"Falha ao atualizar proprietario! Mensagem: O proprietário ID:{id} não existe!") 
 
-        # IF para validar se o email informado já existe no banco
-        if Proprietarios.query.filter_by(email=body["email"]).first():
-            return gera_response(400, "Proprietarios", {}, f"Falha ao atualizar proprietario! Mensagem: O email informado já existe!")
 
         proprietarios = Proprietarios.query.filter_by(id=id).first()
         # IF para validar se o usuário tem as permissões nencessárias para editar
@@ -112,7 +109,7 @@ def proprietarios_atualiza(id, body, current_user):
                 proprietarios.nome = body["nome"]
             if "email" in body:
                 proprietarios.email = body["email"]
-        
+
             db.session.add(proprietarios)
             db.session.commit()
             return gera_response(200, "Proprietarios", proprietarios.to_json(), "Proprietarios atualizado com sucesso!")

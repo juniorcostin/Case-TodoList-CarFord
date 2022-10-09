@@ -4,9 +4,9 @@ import json
 
 import jwt
 from flask import Response
-from api.configuracoes.configuracoes import app
+from configuracoes.configuracoes import app
 
-from api.modulos.usuarios import Usuarios
+from modulos.usuarios import Usuarios
 
 # Função para realizar o login do usuário
 def login_usuario(body):

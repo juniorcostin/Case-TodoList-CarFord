@@ -5,7 +5,7 @@ from functools import wraps
 import jwt
 from flask import Response, current_app, request
 
-from api.modulos.usuarios import Usuarios
+from modulos.usuarios import Usuarios
 
 # Função que valida o token informado no header do endpoint
 def jwt_required(f):
