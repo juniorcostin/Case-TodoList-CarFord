@@ -7,9 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+EXPOSE 10000
 
-CMD ["python", "app.py"]
-CMD ["streamlit", "run", "web/home.py"]
+CMD ["gunicorn", "-w", "4", "app"]
 
-
-EXPOSE 8501

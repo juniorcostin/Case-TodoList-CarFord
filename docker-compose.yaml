@@ -7,12 +7,11 @@ services:
     environment:
       POSTGRES_PASSWORD: example
     restart: always
-  sw:
-
+  api:
+    
     container_name: carford-software
     restart: always
     ports:
-      - "80:8501"
       - "5000:5000"
     depends_on:
       - db

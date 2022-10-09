@@ -155,5 +155,5 @@ def gera_response(status, nome_conteudo, conteudo, mensagem = False):
     return Response(json.dumps(body, default=str), status= status, mimetype="application/json")
 
 #Inicializador Flask
-#app.run(host="localhost",port=5000, debug=True ,threaded=True)
+app.run(host="localhost",port=10000, debug=True ,threaded=True)
 
