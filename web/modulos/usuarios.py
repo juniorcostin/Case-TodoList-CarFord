@@ -110,7 +110,7 @@ def usuarios():
 
         # IF para iniciar a edição
         if editar:            
-            if id == 1 or id == 2:
+            if id == 2:
                 return st.error("Não é possivel editar esse usuário!")
             else:
                 # IF para atualizar caso o nome seja preenchido
