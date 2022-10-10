@@ -52,11 +52,11 @@ Ao acessar as telas de funcionalidades, você perceberá que **não** haverá bo
 Por padrão o sistema virá com um usuário admin.
 
 email:
-```bash
+```
 admin@admin.com
 ```
 senha:
-```bash
+```
 admin
 ```
 
@@ -66,7 +66,7 @@ Não se preocupe, após o primeiro uso você pode alterar a senha normalmente!
 
 Para utilizar as APIs basta você utilizar um client como o Postman e acessar os endpoints, por padrão eles estão nomeados como:
 
-```bash
+```
 http://localhost:5000/api
 ```
 
@@ -85,15 +85,15 @@ Antes de realizar qualquer consulta você deve se logar, para isso é necessári
 Após isso a **API** retornara um **JWT** que você utilizará para acessar todos os outros endpoints.
 #### Usuários:
 GET - lista todos os usuários
-```json
+```
 /api/usuarios
 ```
 GET - lista apenas um usuário
-```json
+```
 /api/usuarios/<ID DO USUARIO>
 ```
 POST - Cadastra um usuário
-```json
+```
 /api/usuarios
 ```
 ```json
@@ -101,11 +101,11 @@ POST - Cadastra um usuário
 "nome": "Nome",
 "email": "E-mail",
 "senha": "Senha",
-"admin": true ou false
+"admin": true  false
 }
 ```
 PUT - Atualiza um usuário
-```json
+```
 /api/usuarios/<ID DO USUARIO>
 ```
 Os todos os parâmetros são opcionais
@@ -114,26 +114,26 @@ Os todos os parâmetros são opcionais
 "nome": "Nome",
 "email": "E-mail",
 "senha": "Senha",
-"admin": true ou false
+"admin": true false
 }
 ```
 DELETE - Deleta um usuário
-```json
+```
 /api/usuarios/<ID DO USUARIO>
 ```
 
 
 #### Carros:
 GET - lista todos os carros
-```json
+```
 /api/carros
 ```
 GET - lista apenas um carro
-```json
+```
 /api/carros/<ID DO CARRO>
 ```
 POST - Cadastra um carro
-```json
+```
 /api/carros
 ```
 ```json
@@ -144,7 +144,7 @@ POST - Cadastra um carro
 }
 ```
 PUT - Atualiza um carro
-```json
+```
 /api/carros/<ID DO CARRO>
 ```
 Os todos os parâmetros são opcionais
@@ -155,22 +155,22 @@ Os todos os parâmetros são opcionais
 }
 ```
 DELETE - Deleta um carro
-```json
+```
 /api/carros/<ID DO CARRO>
 ```
 
 
 #### Proprietários:
 GET - lista todos os proprietários
-```json
+```
 /api/proprietarios
 ```
 GET - lista apenas um proprietário
-```json
+```
 /api/proprietarios/<ID DO PROPRIETARIO>
 ```
 POST - Cadastra um proprietário
-```json
+```
 /api/proprietarios
 ```
 ```json
@@ -180,7 +180,7 @@ POST - Cadastra um proprietário
 }
 ```
 PUT - Atualiza um proprietário
-```json
+```
 /api/proprietarios/<ID DO PROPRIETARIO>
 ```
 Os todos os parâmetros são opcionais
@@ -191,6 +191,6 @@ Os todos os parâmetros são opcionais
 }
 ```
 DELETE - Deleta um proprietário
-```json
+```
 /api/proprietarios/<ID DO PROPRIETARIO>
 ```
